@@ -1,0 +1,701 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Hi Grace 💜</title>
+
+  <!-- Satoshi Bold -->
+  <link
+    href="https://api.fontshare.com/v2/css?f[]=satoshi@700&display=swap"
+    rel="stylesheet"
+  >
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 100%;
+      height: 100vh;
+      height: 100svh;
+      background: #000000;
+      color: #A855F7;
+      font-family: "Satoshi", sans-serif;
+      font-weight: 700;
+      overflow: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .slider {
+      width: 100%;
+      height: 360px;
+      position: relative;
+      overflow: hidden;
+      touch-action: pan-y;
+    }
+
+    .message-slide {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+
+      padding: 25px;
+      text-align: center;
+
+      transition:
+        transform 750ms cubic-bezier(0.76, 0, 0.24, 1);
+
+      will-change: transform;
+    }
+
+    /* Slide positions */
+
+    .message-slide.active {
+      transform: translateX(0);
+    }
+
+    .message-slide.next {
+      transform: translateX(100%);
+    }
+
+    .message-slide.previous {
+      transform: translateX(-100%);
+    }
+
+    .message-slide.exit-left {
+      transform: translateX(-100%);
+    }
+
+    .message-slide.exit-right {
+      transform: translateX(100%);
+    }
+
+    /* Message typography */
+
+    .message-text {
+      max-width: 1000px;
+      color: #A855F7;
+
+      font-size: clamp(30px, 5.5vw, 64px);
+      line-height: 1.25;
+      letter-spacing: -2px;
+      font-weight: 700;
+
+      text-align: center;
+    }
+
+    /* Special alignment for the long goodbye */
+
+    .message-text.goodbye-text {
+      width: max-content;
+      max-width: none;
+
+      white-space: nowrap;
+
+      font-size: clamp(12px, 3vw, 42px);
+      line-height: 1.2;
+      letter-spacing: -1.3px;
+    }
+
+    /* SVG illustrations */
+
+    .message-icon {
+      width: 76px;
+      height: 76px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      flex-shrink: 0;
+    }
+
+    .message-icon:empty {
+      display: none;
+    }
+
+    .message-icon svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .icon-main {
+      stroke: #A855F7;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+    }
+
+    .icon-fill {
+      fill: #A855F7;
+      stroke: none;
+    }
+
+    .icon-light {
+      stroke: #D8B4FE;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+    }
+
+    @media (max-width: 600px) {
+
+      .slider {
+        height: 340px;
+      }
+
+      .message-slide {
+        padding: 20px;
+        gap: 25px;
+      }
+
+      .message-text {
+        font-size: clamp(30px, 8vw, 43px);
+        letter-spacing: -1.5px;
+      }
+
+      .message-text.goodbye-text {
+        font-size: 12px;
+        letter-spacing: -0.5px;
+      }
+
+      .message-icon {
+        width: 65px;
+        height: 65px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .message-slide {
+        transition-duration: 0.01ms;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <main class="container">
+
+    <div class="slider" id="slider">
+
+      <div class="message-slide active" id="slideOne"></div>
+
+      <div class="message-slide next" id="slideTwo"></div>
+
+    </div>
+
+  </main>
+
+
+  <script>
+
+    // ==========================================
+    // CUSTOM SVG ILLUSTRATIONS
+    // ==========================================
+
+    const icons = {
+
+      heart: `
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <path class="icon-main"
+            d="M50 83 C40 73 15 56 15 35
+               C15 14 43 10 50 32
+               C57 10 85 14 85 35
+               C85 56 60 73 50 83Z"
+            stroke-width="3.5"/>
+
+          <path class="icon-light"
+            d="M28 34 C29 26 36 23 43 27"/>
+
+          <path class="icon-main"
+            d="M78 12 L81 19 L88 22 L81 25
+               L78 32 L75 25 L68 22 L75 19Z"/>
+        </svg>
+      `,
+
+      legs: `
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+
+          <path class="icon-main"
+            d="M32 12 L29 49 L22 83
+               Q20 91 30 91 L43 91
+               M63 12 L69 47 L76 83
+               Q78 91 68 91 L55 91"/>
+
+          <path class="icon-light"
+            d="M18 48 L38 48 L35 61 L15 61Z
+               M62 48 L82 48 L85 61 L65 61Z"/>
+
+          <path class="icon-main"
+            d="M24 51 L32 58 M72 51 L80 58"/>
+
+          <path class="icon-light"
+            d="M48 15 L48 30 M41 22 L55 22"/>
+
+        </svg>
+      `,
+
+      sorry: `
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+
+          <path class="icon-main"
+            d="M50 83 C40 73 15 56 15 35
+               C15 14 43 10 50 32
+               C57 10 85 14 85 35
+               C85 56 60 73 50 83Z"
+            stroke-width="3"/>
+
+          <path class="icon-light"
+            d="M38 43 Q44 48 50 43
+               M50 43 Q56 48 62 43
+               M50 55 L50 64"/>
+
+          <path class="icon-main"
+            d="M15 13 L18 20 L25 23
+               L18 26 L15 33 L12 26
+               L5 23 L12 20Z"/>
+
+        </svg>
+      `,
+
+      goodbye: `
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+
+          <path class="icon-main"
+            d="M37 51 L37 29
+               Q37 22 43 22
+               Q49 22 49 29
+               L49 43 L49 17
+               Q49 10 55 10
+               Q61 10 61 17
+               L61 43 L61 24
+               Q61 17 67 17
+               Q73 17 73 24
+               L73 46 L73 34
+               Q73 27 79 29
+               Q85 30 84 38
+               L81 66
+               Q79 84 62 88
+               L52 90
+               Q35 91 29 76
+               L16 57
+               Q11 49 17 45
+               Q23 41 29 49Z"/>
+
+          <path class="icon-light"
+            d="M12 18 L20 12 L28 18
+               M7 32 L18 32
+               M19 7 L19 16"/>
+
+        </svg>
+      `
+    };
+
+
+    // ==========================================
+    // MESSAGE SEQUENCE
+    // ==========================================
+
+    const messages = [
+
+      {
+        text: "Hi Grace",
+        icon: icons.heart
+      },
+
+      {
+        text: "Sorry for not walking you to your hostel.",
+        icon: ""
+      },
+
+      {
+        text: "My legs had issues.",
+        icon: icons.legs
+      },
+
+      {
+        text: "Sorry.",
+        icon: icons.sorry
+      },
+
+      {
+        text: "Byeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee, Grace.",
+        icon: icons.goodbye,
+        className: "goodbye-text"
+      }
+
+    ];
+
+
+    // ==========================================
+    // SLIDER SETUP
+    // ==========================================
+
+    const slider = document.getElementById("slider");
+
+    const slideOne = document.getElementById("slideOne");
+    const slideTwo = document.getElementById("slideTwo");
+
+    let activeSlide = slideOne;
+    let incomingSlide = slideTwo;
+
+    let currentIndex = 0;
+
+    let isTransitioning = false;
+
+    let navigationQueue = [];
+
+    let autoTimer = null;
+
+    const HOLD_DURATION = 2600;
+    const TRANSITION_DURATION = 750;
+
+
+    const sleep = duration =>
+      new Promise(resolve => setTimeout(resolve, duration));
+
+
+    // ==========================================
+    // RENDER EACH MESSAGE
+    // ==========================================
+
+    function renderMessage(element, index) {
+
+      const item = messages[index];
+
+      const messageText = document.createElement("div");
+
+      messageText.className =
+        "message-text " + (item.className || "");
+
+      messageText.textContent = item.text;
+
+      const messageIcon = document.createElement("div");
+
+      messageIcon.className = "message-icon";
+
+      messageIcon.innerHTML = item.icon;
+
+      element.replaceChildren(messageText, messageIcon);
+
+      if (item.className === "goodbye-text") {
+        fitGoodbyeText(messageText);
+      }
+
+    }
+
+
+    // ==========================================
+    // FIX LONG GOODBYE ALIGNMENT
+    // ==========================================
+
+    function fitGoodbyeText(element) {
+
+      element.style.fontSize = "";
+
+      const availableWidth = slider.clientWidth - 48;
+
+      const naturalWidth = element.scrollWidth;
+
+      const originalSize =
+        parseFloat(getComputedStyle(element).fontSize);
+
+      if (naturalWidth > availableWidth) {
+
+        const fittedSize =
+          originalSize * (availableWidth / naturalWidth);
+
+        element.style.fontSize =
+          Math.max(10, fittedSize) + "px";
+
+      }
+
+    }
+
+
+    // Recalculate if browser dimensions change
+
+    window.addEventListener("resize", () => {
+
+      const goodbye =
+        activeSlide.querySelector(".goodbye-text");
+
+      if (goodbye) {
+        fitGoodbyeText(goodbye);
+      }
+
+    });
+
+
+    // ==========================================
+    // AUTOMATIC SLIDING
+    // ==========================================
+
+    function scheduleAutoAdvance() {
+
+      clearTimeout(autoTimer);
+
+      autoTimer = setTimeout(() => {
+        navigate(1);
+      }, HOLD_DURATION);
+
+    }
+
+
+    // ==========================================
+    // MAIN NAVIGATION FUNCTION
+    // ==========================================
+
+    function navigate(direction) {
+
+      clearTimeout(autoTimer);
+
+      // Queue input if another transition is running
+
+      if (isTransitioning) {
+
+        navigationQueue.push(direction);
+
+        return;
+      }
+
+      isTransitioning = true;
+
+      const nextIndex =
+        (currentIndex + direction + messages.length)
+        % messages.length;
+
+      // Position incoming slide
+
+      const startPosition =
+        direction > 0 ? "next" : "previous";
+
+      incomingSlide.className =
+        "message-slide " + startPosition;
+
+      renderMessage(incomingSlide, nextIndex);
+
+      // Prepare browser to register starting position
+
+      void incomingSlide.offsetWidth;
+
+      // Move old slide out
+
+      activeSlide.classList.remove("active");
+
+      activeSlide.classList.add(
+        direction > 0 ? "exit-left" : "exit-right"
+      );
+
+      // Move new slide into view
+
+      incomingSlide.classList.remove(startPosition);
+
+      incomingSlide.classList.add("active");
+
+      // Finish transition
+
+      setTimeout(() => {
+
+        activeSlide.style.transition = "none";
+
+        activeSlide.className = "message-slide next";
+
+        void activeSlide.offsetWidth;
+
+        activeSlide.style.transition = "";
+
+        // Swap elements
+
+        const oldActive = activeSlide;
+
+        activeSlide = incomingSlide;
+
+        incomingSlide = oldActive;
+
+        currentIndex = nextIndex;
+
+        isTransitioning = false;
+
+        // Handle queued navigation
+
+        if (navigationQueue.length > 0) {
+
+          const nextDirection = navigationQueue.shift();
+
+          navigate(nextDirection);
+
+        } else {
+
+          scheduleAutoAdvance();
+
+        }
+
+      }, TRANSITION_DURATION);
+
+    }
+
+
+    // ==========================================
+    // LAPTOP KEYBOARD CONTROLS
+    // ==========================================
+
+    document.addEventListener("keydown", event => {
+
+      if (event.key === "ArrowRight") {
+
+        event.preventDefault();
+
+        navigate(1);
+
+      }
+
+      if (event.key === "ArrowLeft") {
+
+        event.preventDefault();
+
+        navigate(-1);
+
+      }
+
+    });
+
+
+    // ==========================================
+    // TOUCHSCREEN / TOUCHPAD SWIPES
+    // ==========================================
+
+    let pointerStartX = 0;
+    let pointerStartY = 0;
+
+    let pointerActive = false;
+
+    slider.addEventListener("pointerdown", event => {
+
+      if (event.pointerType === "mouse") return;
+
+      pointerStartX = event.clientX;
+
+      pointerStartY = event.clientY;
+
+      pointerActive = true;
+
+    });
+
+
+    slider.addEventListener("pointerup", event => {
+
+      if (!pointerActive) return;
+
+      pointerActive = false;
+
+      const differenceX =
+        event.clientX - pointerStartX;
+
+      const differenceY =
+        event.clientY - pointerStartY;
+
+      const horizontalSwipe =
+        Math.abs(differenceX) > 45 &&
+        Math.abs(differenceX) > Math.abs(differenceY) * 1.2;
+
+      if (!horizontalSwipe) return;
+
+      if (differenceX < 0) {
+
+        // Swipe left = next message
+
+        navigate(1);
+
+      } else {
+
+        // Swipe right = previous message
+
+        navigate(-1);
+
+      }
+
+    });
+
+
+    slider.addEventListener("pointercancel", () => {
+
+      pointerActive = false;
+
+    });
+
+
+    // ==========================================
+    // TRACKPAD HORIZONTAL SCROLL
+    // ==========================================
+
+    let wheelLocked = false;
+
+    slider.addEventListener("wheel", event => {
+
+      const horizontalMovement =
+        Math.abs(event.deltaX) > Math.abs(event.deltaY);
+
+      if (!horizontalMovement ||
+          Math.abs(event.deltaX) < 20 ||
+          wheelLocked) return;
+
+      event.preventDefault();
+
+      wheelLocked = true;
+
+      navigate(event.deltaX > 0 ? 1 : -1);
+
+      setTimeout(() => {
+        wheelLocked = false;
+      }, 800);
+
+    }, { passive: false });
+
+
+    // ==========================================
+    // START EXPERIENCE
+    // ==========================================
+
+    function startExperience() {
+
+      renderMessage(activeSlide, 0);
+
+      renderMessage(incomingSlide, 1);
+
+      scheduleAutoAdvance();
+
+    }
+
+    startExperience();
+
+  </script>
+
+</body>
+</html>
